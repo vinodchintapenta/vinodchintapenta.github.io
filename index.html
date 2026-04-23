@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vinod Chintapenta — Lead Cloud Architect & Author</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600;700;800&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:       #040b18;
+      --bg2:      #070f20;
+      --bg3:      #0b1630;
+      --surface:  #0e1e3a;
+      --border:   rgba(0,200,255,0.12);
+      --cyan:     #00d4ff;
+      --cyan2:    #00f5c8;
+      --amber:    #f59e0b;
+      --text:     #dce8f5;
+      --muted:    #6a8aaa;
+      --white:    #ffffff;
+      --font-display: 'Oxanium', sans-serif;
+      --font-body:    'IBM Plex Sans', sans-serif;
+      --font-mono:    'IBM Plex Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.65;
+    }
+
+    /* ── NOISE TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5vw;
+      height: 64px;
+      backdrop-filter: blur(20px) saturate(1.4);
+      background: rgba(4,11,24,0.75);
+      border-bottom: 1px solid var(--border);
+      transition: all 0.3s;
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 700; font-size: 1.1rem;
+      color: var(--cyan);
+      letter-spacing: 0.08em;
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 0.75rem; letter-spacing: 0.12em;
+      color: var(--muted); text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--cyan); }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 0 5vw;
+      overflow: hidden;
+    }
+
+    /* Animated grid background */
+    #hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+      animation: gridPulse 8s ease-in-out infinite;
+    }
+    @keyframes gridPulse {
+      0%,100% { opacity: 0.5; } 50% { opacity: 1; }
+    }
+
+    /* Glow orbs */
+    .orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); pointer-events: none; animation: orbFloat 12s ease-in-out infinite;
+    }
+    .orb1 { width: 500px; height: 500px; background: rgba(0,212,255,0.07); top: -100px; right: -100px; animation-delay: 0s; }
+    .orb2 { width: 350px; height: 350px; background: rgba(0,245,200,0.05); bottom: -50px; left: 5%; animation-delay: -4s; }
+    .orb3 { width: 250px; height: 250px; background: rgba(245,158,11,0.06); top: 40%; right: 20%; animation-delay: -8s; }
+    @keyframes orbFloat {
+      0%,100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-30px) scale(1.05); }
+    }
+
+    .hero-content { position: relative; z-index: 2; max-width: 760px; }
+
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.78rem; letter-spacing: 0.2em;
+      color: var(--cyan); text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      display: flex; align-items: center; gap: 0.75rem;
+      opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
+    }
+    .hero-eyebrow::before {
+      content: ''; display: block; width: 32px; height: 1px; background: var(--cyan);
+    }
+
+    .hero-name {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 800; line-height: 0.95;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+      opacity: 0; animation: fadeUp 0.8s 0.4s forwards;
+    }
+    .hero-name span { color: var(--cyan); }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(1rem, 2.5vw, 1.4rem);
+      font-weight: 300;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      opacity: 0; animation: fadeUp 0.8s 0.6s forwards;
+    }
+
+    .hero-desc {
+      font-size: 1.05rem; line-height: 1.75;
+      color: rgba(220,232,245,0.75);
+      max-width: 560px; margin-bottom: 2.5rem;
+      opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
+    }
+
+    .hero-tags {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      margin-bottom: 2.5rem;
+      opacity: 0; animation: fadeUp 0.8s 1s forwards;
+    }
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem; letter-spacing: 0.1em;
+      padding: 0.3rem 0.8rem;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--cyan2);
+      background: rgba(0,245,200,0.04);
+      text-transform: uppercase;
+    }
+
+    .hero-cta {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      opacity: 0; animation: fadeUp 0.8s 1.2s forwards;
+    }
+    .btn-primary {
+      font-family: var(--font-mono);
+      font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0.85rem 2rem; border-radius: 4px;
+      background: var(--cyan); color: var(--bg);
+      border: none; cursor: pointer; text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+      box-shadow: 0 0 24px rgba(0,212,255,0.3);
+    }
+    .btn-primary:hover { background: var(--cyan2); box-shadow: 0 0 36px rgba(0,212,255,0.5); transform: translateY(-1px); }
+    .btn-secondary {
+      font-family: var(--font-mono);
+      font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0.85rem 2rem; border-radius: 4px;
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border); cursor: pointer; text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--cyan); color: var(--cyan); }
+
+    .hero-stats {
+      position: absolute; bottom: 3rem; right: 5vw;
+      display: flex; gap: 3rem; z-index: 2;
+      opacity: 0; animation: fadeUp 0.8s 1.4s forwards;
+    }
+    .stat-item { text-align: center; }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 2.2rem; font-weight: 700; color: var(--white);
+      line-height: 1;
+    }
+    .stat-num span { color: var(--cyan); }
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem; color: var(--muted); letter-spacing: 0.1em;
+      text-transform: uppercase; margin-top: 0.25rem;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SECTIONS ── */
+    section { padding: 7rem 5vw; position: relative; }
+    section:nth-child(even) { background: var(--bg2); }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--cyan); margin-bottom: 0.75rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .section-label::after {
+      content: ''; flex: 1; max-width: 60px; height: 1px; background: var(--cyan); opacity: 0.4;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 700;
+      color: var(--white); margin-bottom: 1rem; line-height: 1.1;
+    }
+    .section-sub {
+      font-size: 1rem; color: var(--muted); max-width: 560px; margin-bottom: 3.5rem;
+    }
+
+    /* ── ABOUT ── */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    .about-text p { color: rgba(220,232,245,0.8); margin-bottom: 1rem; font-size: 1.02rem; line-height: 1.8; }
+    .about-highlights { display: flex; flex-direction: column; gap: 1rem; }
+    .highlight-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+      transition: all 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .highlight-card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      background: var(--cyan); opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .highlight-card:hover { border-color: var(--cyan); transform: translateX(4px); }
+    .highlight-card:hover::before { opacity: 1; }
+    .highlight-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .highlight-card strong {
+      display: block; font-family: var(--font-display);
+      font-size: 0.9rem; color: var(--white); margin-bottom: 0.15rem;
+    }
+    .highlight-card span { font-size: 0.82rem; color: var(--muted); }
+
+    /* ── SKILLS ── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .skill-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.75rem;
+      transition: all 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .skill-card::after {
+      content: ''; position: absolute;
+      top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(0,212,255,0.04) 0%, transparent 60%);
+      opacity: 0; transition: opacity 0.4s;
+      pointer-events: none;
+    }
+    .skill-card:hover { border-color: rgba(0,212,255,0.3); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+    .skill-card:hover::after { opacity: 1; }
+    .skill-card-icon { font-size: 1.8rem; margin-bottom: 1rem; }
+    .skill-card h3 {
+      font-family: var(--font-display);
+      font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em;
+      color: var(--cyan); text-transform: uppercase; margin-bottom: 0.85rem;
+    }
+    .skill-items { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .skill-pill {
+      font-family: var(--font-mono);
+      font-size: 0.68rem; padding: 0.25rem 0.65rem;
+      background: rgba(0,212,255,0.06);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 3px; color: var(--text);
+    }
+
+    /* ── EXPERIENCE ── */
+    .timeline { position: relative; padding-left: 2rem; }
+    .timeline::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 1px; background: linear-gradient(to bottom, var(--cyan), transparent);
+    }
+    .timeline-item {
+      position: relative; margin-bottom: 3.5rem;
+      padding-left: 2rem;
+      opacity: 0; transform: translateX(-20px);
+      transition: all 0.6s;
+    }
+    .timeline-item.visible { opacity: 1; transform: translateX(0); }
+    .timeline-dot {
+      position: absolute; left: -2.4rem; top: 0.3rem;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--bg); border: 2px solid var(--cyan);
+      box-shadow: 0 0 12px rgba(0,212,255,0.5);
+    }
+    .timeline-meta {
+      display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+      margin-bottom: 0.5rem;
+    }
+    .timeline-company {
+      font-family: var(--font-display);
+      font-size: 1.1rem; font-weight: 700; color: var(--white);
+    }
+    .timeline-period {
+      font-family: var(--font-mono);
+      font-size: 0.72rem; color: var(--amber); letter-spacing: 0.1em;
+      padding: 0.2rem 0.6rem;
+      background: rgba(245,158,11,0.08);
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: 3px;
+    }
+    .timeline-role {
+      font-size: 0.9rem; color: var(--cyan2); margin-bottom: 1rem;
+      font-weight: 500;
+    }
+    .timeline-project {
+      font-family: var(--font-display);
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em;
+      color: var(--amber); text-transform: uppercase; margin-bottom: 0.75rem;
+    }
+    .timeline-achievements { list-style: none; }
+    .timeline-achievements li {
+      font-size: 0.92rem; color: rgba(220,232,245,0.75);
+      padding: 0.4rem 0 0.4rem 1.2rem;
+      position: relative; border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .timeline-achievements li::before {
+      content: '▸'; position: absolute; left: 0; color: var(--cyan); font-size: 0.65rem; top: 0.55rem;
+    }
+    .achievement-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.65rem; padding: 0.1rem 0.5rem;
+      background: rgba(0,212,255,0.1);
+      border: 1px solid rgba(0,212,255,0.25);
+      border-radius: 2px; color: var(--cyan);
+      margin-left: 0.5rem; vertical-align: middle;
+    }
+
+    /* ── CERTS & AWARDS ── */
+    .certs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem; }
+    .cert-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .cert-card:hover { border-color: rgba(0,212,255,0.35); transform: translateY(-3px); }
+    .cert-icon { font-size: 2.2rem; margin-bottom: 0.75rem; }
+    .cert-card h4 { font-family: var(--font-display); font-size: 0.88rem; color: var(--white); margin-bottom: 0.35rem; }
+    .cert-card p { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); }
+
+    .awards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-top: 2rem; }
+    .award-pill {
+      background: rgba(245,158,11,0.06);
+      border: 1px solid rgba(245,158,11,0.18);
+      border-radius: 8px; padding: 1rem 1.25rem;
+      text-align: center; transition: all 0.3s;
+    }
+    .award-pill:hover { background: rgba(245,158,11,0.1); border-color: var(--amber); }
+    .award-pill .award-icon { font-size: 1.4rem; margin-bottom: 0.4rem; }
+    .award-pill p { font-size: 0.82rem; color: var(--amber); font-weight: 500; }
+    .award-pill span { font-family: var(--font-mono); font-size: 0.68rem; color: var(--muted); }
+
+    /* ── CONFERENCES ── */
+    .conf-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+    .conf-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 2rem;
+      position: relative; overflow: hidden;
+      transition: all 0.3s;
+    }
+    .conf-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--cyan), var(--cyan2));
+    }
+    .conf-card:hover { border-color: rgba(0,212,255,0.3); transform: translateY(-3px); }
+    .conf-badge {
+      font-family: var(--font-mono);
+      font-size: 0.7rem; letter-spacing: 0.12em;
+      color: var(--cyan); text-transform: uppercase; margin-bottom: 0.75rem;
+    }
+    .conf-name {
+      font-family: var(--font-display);
+      font-size: 1.15rem; font-weight: 700; color: var(--white); margin-bottom: 0.4rem;
+    }
+    .conf-detail { font-size: 0.88rem; color: var(--muted); }
+
+    /* ── PASSION / ABOUT ME ── */
+    .passion-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; }
+    .passion-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.75rem 1.5rem;
+      text-align: center; transition: all 0.3s;
+    }
+    .passion-card:hover { border-color: rgba(0,212,255,0.3); transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.4); }
+    .passion-card .p-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .passion-card h3 { font-family: var(--font-display); font-size: 1rem; color: var(--white); margin-bottom: 0.5rem; }
+    .passion-card p { font-size: 0.84rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── CONTACT ── */
+    #contact {
+      background: var(--bg3);
+      text-align: center;
+    }
+    .contact-box {
+      max-width: 640px; margin: 0 auto;
+    }
+    .contact-links {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-top: 2.5rem;
+    }
+    .contact-link {
+      font-family: var(--font-mono);
+      font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 0.85rem 1.75rem; border-radius: 4px;
+      border: 1px solid var(--border); color: var(--text);
+      text-decoration: none; transition: all 0.2s;
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .contact-link:hover { border-color: var(--cyan); color: var(--cyan); }
+    .contact-email {
+      font-family: var(--font-mono);
+      font-size: 1.1rem; color: var(--cyan);
+      margin: 1.5rem 0; letter-spacing: 0.05em;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 2rem 5vw;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+      font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted);
+    }
+    footer span { color: var(--cyan); }
+
+    /* ── SCROLL ANIMATIONS ── */
+    .reveal { opacity: 0; transform: translateY(24px); transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── WRITER SECTION ── */
+    #writer { background: var(--bg3); }
+    .writer-layout {
+      display: grid; grid-template-columns: 1fr 1.2fr; gap: 4rem; align-items: center;
+    }
+    .writer-book-card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2.5rem 2rem;
+      overflow: hidden;
+      transition: all 0.4s;
+    }
+    .writer-book-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, #f59e0b, #ef4444, #8b5cf6);
+    }
+    .writer-book-card:hover { border-color: rgba(245,158,11,0.4); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+    .book-genre {
+      font-family: var(--font-mono);
+      font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .book-genre::before { content: ''; width: 20px; height: 1px; background: var(--amber); }
+    .book-title {
+      font-family: var(--font-display);
+      font-size: 2.2rem; font-weight: 800; color: var(--white);
+      margin-bottom: 0.5rem; line-height: 1.1;
+    }
+    .book-title span { color: var(--amber); }
+    .book-author {
+      font-family: var(--font-mono);
+      font-size: 0.78rem; color: var(--muted); margin-bottom: 1.5rem; letter-spacing: 0.1em;
+    }
+    .book-desc {
+      font-size: 0.95rem; color: rgba(220,232,245,0.75); line-height: 1.75; margin-bottom: 2rem;
+    }
+    .book-cta {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 0.8rem 1.75rem; border-radius: 4px;
+      background: var(--amber); color: var(--bg);
+      border: none; text-decoration: none; font-weight: 600;
+      transition: all 0.2s;
+      box-shadow: 0 0 20px rgba(245,158,11,0.3);
+    }
+    .book-cta:hover { background: #fbbf24; box-shadow: 0 0 32px rgba(245,158,11,0.5); transform: translateY(-1px); }
+    .inkitt-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.68rem; color: var(--muted); letter-spacing: 0.08em;
+    }
+    .writer-text p {
+      font-size: 1rem; color: rgba(220,232,245,0.8); line-height: 1.8; margin-bottom: 1.25rem;
+    }
+    .writer-quote {
+      border-left: 3px solid var(--amber);
+      padding: 1rem 1.5rem;
+      background: rgba(245,158,11,0.04);
+      border-radius: 0 8px 8px 0;
+      margin: 1.5rem 0 2rem;
+    }
+    .writer-quote p {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 1.05rem;
+      color: rgba(220,232,245,0.85);
+      margin: 0 !important;
+      line-height: 1.7;
+    }
+    .writer-quote cite {
+      display: block; margin-top: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem; color: var(--amber); letter-spacing: 0.1em;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .writer-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero-stats { position: static; margin-top: 3rem; flex-wrap: wrap; justify-content: center; }
+      nav { padding: 0 1.5rem; }
+      .nav-links { display: none; }
+      section { padding: 5rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#hero"><span style="opacity:0.5">&lt;</span>VC<span style="opacity:0.5">&gt;</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#certs">Certs</a></li>
+    <li><a href="#passion">Passion</a></li>
+    <li><a href="#writer">Writer</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">Lead Cloud Architect · Author</div>
+    <h1 class="hero-name">Vinod<br /><span>Chintapenta</span></h1>
+    <p class="hero-title">13+ Years · AWS · Azure · Cloud Native · Platform Engineering · Kafka · Kubernetes</p>
+    <p class="hero-desc">
+      I architect cloud-native systems that endure — from IoT platforms processing millions of daily events, to automotive incentive platforms, to federal healthcare systems. I turn hard distributed systems problems into resilient, business-driven solutions. Beyond engineering, I write fiction.
+    </p>
+    <div class="hero-tags">
+      <span class="tag">Cloud Architecture</span>
+      <span class="tag">AWS EKS · MSK · Lambda</span>
+      <span class="tag">Azure AKS · Event Hub</span>
+      <span class="tag">Platform Engineering</span>
+      <span class="tag">IaC · Terraform</span>
+      <span class="tag">Apache Kafka</span>
+      <span class="tag">Kubernetes · GitOps</span>
+      <span class="tag">CQRS · Saga · DDD</span>
+      <span class="tag">Spring Boot</span>
+      <span class="tag">CKAD Certified</span>
+    </div>
+    <div class="hero-cta">
+      <a href="#experience" class="btn-primary">View Experience</a>
+      <a href="#contact" class="btn-secondary">Get In Touch</a>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">13<span>+</span></div>
+      <div class="stat-label">Years Experience</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">2<span>M+</span></div>
+      <div class="stat-label">Events / Day</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">99<span>.9%</span></div>
+      <div class="stat-label">Uptime SLA</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">30<span>%</span></div>
+      <div class="stat-label">Cost Reduction</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label">01 — About</div>
+  <h2 class="section-title">Building Systems<br />That Don't Break</h2>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>
+        I'm a Lead Cloud Architect based in Hyderabad, India, with over <strong style="color:var(--white)">13 years of experience</strong> designing distributed, cloud-native systems across multiple industries and cloud platforms.
+      </p>
+      <p>
+        My work spans IoT platforms processing millions of daily events, automotive incentive management systems, and large-scale federal healthcare applications — bringing architectural depth across <strong style="color:var(--white)">AWS</strong>, <strong style="color:var(--white)">Azure</strong>, and the broader cloud-native ecosystem.
+      </p>
+      <p>
+        I specialize in Platform Engineering, Infrastructure as Code, and Cloud Architecture — designing the foundations that enable teams to ship faster and systems to survive at scale. Currently a Senior Technical Lead &amp; Solution Architect at <strong style="color:var(--white)">Hexagon Capability Hub India</strong>.
+      </p>
+      <p>
+        Outside of engineering, I'm a fiction writer — author of <em style="color:var(--cyan2)">Flushbacks</em>, published on Inkitt. I believe the discipline of storytelling and the craft of system design share the same core skill: shaping complexity into something coherent and meaningful.
+      </p>
+    </div>
+    <div class="about-highlights reveal">
+      <div class="highlight-card">
+        <span class="highlight-icon">🏗️</span>
+        <div>
+          <strong>Cloud Architecture</strong>
+          <span>Designing resilient, scalable systems on AWS and Azure — from IaC blueprints to production multi-region deployments.</span>
+        </div>
+      </div>
+      <div class="highlight-card">
+        <span class="highlight-icon">☁️</span>
+        <div>
+          <strong>AWS · Azure · Cloud Native</strong>
+          <span>Production deployments and certifications across both clouds — EKS, MSK, AKS, Event Hub, and the full cloud-native stack.</span>
+        </div>
+      </div>
+      <div class="highlight-card">
+        <span class="highlight-icon">🔧</span>
+        <div>
+          <strong>Platform Engineering &amp; IaC</strong>
+          <span>Kubernetes, Helm, Argo CD, Terraform, Crossplane — building the platforms that other teams build on.</span>
+        </div>
+      </div>
+      <div class="highlight-card">
+        <span class="highlight-icon">⚡</span>
+        <div>
+          <strong>Performance Obsessed</strong>
+          <span>40% API improvement with L1/L2 caching. Sub-second latency at 2M+ events/day on Kafka.</span>
+        </div>
+      </div>
+      <div class="highlight-card">
+        <span class="highlight-icon">👥</span>
+        <div>
+          <strong>Engineering Leader</strong>
+          <span>13+ years of hands-on delivery, mentoring 6+ engineers and improving team velocity by 35%.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">02 — Core Skills</div>
+  <h2 class="section-title">Technical Arsenal</h2>
+  <p class="section-sub">The tools, patterns, and platforms I use to build production-grade distributed systems.</p>
+
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <div class="skill-card-icon">🧱</div>
+      <h3>Cloud Architecture</h3>
+      <div class="skill-items">
+        <span class="skill-pill">Microservices</span>
+        <span class="skill-pill">Event-Driven</span>
+        <span class="skill-pill">CQRS</span>
+        <span class="skill-pill">Saga Pattern</span>
+        <span class="skill-pill">Circuit Breaker</span>
+        <span class="skill-pill">API Gateway</span>
+        <span class="skill-pill">DDD</span>
+        <span class="skill-pill">Multi-Region Design</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-card-icon">🟠</div>
+      <h3>Amazon Web Services</h3>
+      <div class="skill-items">
+        <span class="skill-pill">EKS</span>
+        <span class="skill-pill">MSK (Kafka)</span>
+        <span class="skill-pill">S3</span>
+        <span class="skill-pill">Lambda</span>
+        <span class="skill-pill">CloudWatch</span>
+        <span class="skill-pill">IAM</span>
+        <span class="skill-pill">VPC</span>
+        <span class="skill-pill">AWS SAA Certified</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-card-icon">🔵</div>
+      <h3>Microsoft Azure</h3>
+      <div class="skill-items">
+        <span class="skill-pill">AKS</span>
+        <span class="skill-pill">Event Hub</span>
+        <span class="skill-pill">Key Vault</span>
+        <span class="skill-pill">API Gateway</span>
+        <span class="skill-pill">Azure DevOps</span>
+        <span class="skill-pill">Azure Monitor</span>
+        <span class="skill-pill">RBAC</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-card-icon">🔧</div>
+      <h3>Platform Engineering</h3>
+      <div class="skill-items">
+        <span class="skill-pill">Kubernetes</span>
+        <span class="skill-pill">Docker</span>
+        <span class="skill-pill">Helm</span>
+        <span class="skill-pill">Argo CD</span>
+        <span class="skill-pill">GitOps</span>
+        <span class="skill-pill">KEDA</span>
+        <span class="skill-pill">GitLab CI/CD</span>
+        <span class="skill-pill">Jenkins</span>
+        <span class="skill-pill">CKAD Certified</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-card-icon">🌍</div>
+      <h3>Infrastructure as Code</h3>
+      <div class="skill-items">
+        <span class="skill-pill">Terraform</span>
+        <span class="skill-pill">Crossplane</span>
+        <span class="skill-pill">Helm Charts</span>
+        <span class="skill-pill">GitOps Workflows</span>
+        <span class="skill-pill">Argo CD</span>
+        <span class="skill-pill">Infrastructure Automation</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-card-icon">☕</div>
+      <h3>Languages & Frameworks</h3>
+      <div class="skill-items">
+        <span class="skill-pill">Java 21</span>
+        <span class="skill-pill">Spring Boot 3.5</span>
+        <span class="skill-pill">Apache Kafka</span>
+        <span class="skill-pill">Spring Cloud</span>
+        <span class="skill-pill">Spring Data JDBC</span>
+        <span class="skill-pill">JPA / Hibernate</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-card-icon">🗃️</div>
+      <h3>Data & Caching</h3>
+      <div class="skill-items">
+        <span class="skill-pill">PostgreSQL</span>
+        <span class="skill-pill">MongoDB</span>
+        <span class="skill-pill">Oracle</span>
+        <span class="skill-pill">Redis</span>
+        <span class="skill-pill">Caffeine Cache</span>
+        <span class="skill-pill">NoSQL</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-card-icon">📡</div>
+      <h3>Observability</h3>
+      <div class="skill-items">
+        <span class="skill-pill">Prometheus</span>
+        <span class="skill-pill">Grafana</span>
+        <span class="skill-pill">OpenTelemetry</span>
+        <span class="skill-pill">CloudWatch</span>
+        <span class="skill-pill">Distributed Tracing</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-card-icon">🔐</div>
+      <h3>Security</h3>
+      <div class="skill-items">
+        <span class="skill-pill">OAuth2 / OIDC</span>
+        <span class="skill-pill">Keycloak</span>
+        <span class="skill-pill">JWT</span>
+        <span class="skill-pill">RBAC</span>
+        <span class="skill-pill">Multi-Tenant Isolation</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label">03 — Experience</div>
+  <h2 class="section-title">Where I've Built Things</h2>
+  <p class="section-sub">12+ years across IoT platforms, automotive systems, and healthcare applications.</p>
+
+  <div class="timeline">
+
+    <!-- Hexagon -->
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-meta">
+        <span class="timeline-company">Hexagon Capability Hub India Ltd.</span>
+        <span class="timeline-period">Aug 2021 — Present</span>
+      </div>
+      <div class="timeline-role">Senior Technical Lead / Solution Architect</div>
+      <div class="timeline-project">✦ XALT IoT Platform</div>
+      <ul class="timeline-achievements">
+        <li>Architected and led development of cloud-native IoT platform serving <strong style="color:var(--white)">95,000+ devices</strong> with 99.9% uptime, processing millions of daily events. <span class="achievement-badge">99.9% uptime</span></li>
+        <li>Designed high-throughput Kafka streaming architecture processing <strong style="color:var(--white)">2M+ events/day</strong> with exactly-once semantics and sub-second latency.</li>
+        <li>Delivered <strong style="color:var(--white)">30% cloud cost reduction</strong> through optimized AWS EKS/MSK architecture and right-sizing. <span class="achievement-badge">30% savings</span></li>
+        <li>Built and maintained 15+ Spring Boot microservices applying DDD (bounded contexts, aggregates, anti-corruption layers).</li>
+        <li>Designed multi-level caching (Caffeine L1 + Redis L2), improving API response times by <strong style="color:var(--white)">40%</strong> and reducing DB load by 50%. <span class="achievement-badge">40% faster</span></li>
+        <li>Implemented OAuth2/OIDC security using Keycloak with JWT, RBAC, and multi-tenant isolation.</li>
+        <li>Mentored 6 engineers, improving delivery velocity by <strong style="color:var(--white)">35%</strong> through architectural standards and best practices.</li>
+      </ul>
+    </div>
+
+    <!-- TCS -->
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-meta">
+        <span class="timeline-company">Tata Consultancy Services Limited</span>
+        <span class="timeline-period">Oct 2016 — Aug 2021</span>
+      </div>
+      <div class="timeline-role">Lead Engineer</div>
+      <div class="timeline-project">✦ Vehicle Incentive Management System</div>
+      <ul class="timeline-achievements">
+        <li>Led a team of 4 to design and deliver an Azure-based microservices platform for the US automotive market.</li>
+        <li>Introduced microservice architecture using Spring Boot for incentive calculation and planning services via RESTful APIs.</li>
+        <li>Implemented Kafka-based asynchronous processing for incentive workflows, improving system decoupling and throughput.</li>
+        <li>Introduced Redis caching for high-read datasets, reducing database load and improving response times by <strong style="color:var(--white)">25%</strong>. <span class="achievement-badge">25% faster</span></li>
+        <li>Contributed to architectural decisions, service design, and performance improvements across multiple modules.</li>
+      </ul>
+    </div>
+
+    <!-- S2Tech -->
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-meta">
+        <span class="timeline-company">S2Tech.com India Pvt. Ltd.</span>
+        <span class="timeline-period">Apr 2013 — Aug 2016</span>
+      </div>
+      <div class="timeline-role">Senior Software Engineer</div>
+      <div class="timeline-project">✦ Mississippi MEDS — Medicaid Eligibility Determination System</div>
+      <ul class="timeline-achievements">
+        <li>Implemented enterprise Java applications using Struts2, JSP, and Hibernate for large-scale healthcare system.</li>
+        <li>Designed relational data models and complex SQL queries to support Medicaid eligibility workflows.</li>
+        <li>Developed unit tests using JUnit and Mockito to validate business logic and ensure code quality.</li>
+        <li>Led modernization effort migrating legacy Servlets to Struts2, improving maintainability.</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- CERTS & AWARDS -->
+<section id="certs">
+  <div class="section-label">04 — Certifications & Recognition</div>
+  <h2 class="section-title">Credentials & Awards</h2>
+
+  <div class="certs-grid reveal">
+    <div class="cert-card">
+      <div class="cert-icon">⎈</div>
+      <h4>CKAD — Certified Kubernetes Application Developer</h4>
+      <p>The Linux Foundation</p>
+    </div>
+    <div class="cert-card">
+      <div class="cert-icon">☁️</div>
+      <h4>AWS Certified Solutions Architect Associate</h4>
+      <p>Amazon Web Services</p>
+    </div>
+    <div class="cert-card">
+      <div class="cert-icon">📈</div>
+      <h4>Scaling Cloud Native Apps with KEDA</h4>
+      <p>The Linux Foundation</p>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top: 3rem">Awards & Recognition</div>
+  <div class="awards-grid reveal">
+    <div class="award-pill">
+      <div class="award-icon">🏆</div>
+      <p>Hexathon Winner</p>
+      <span>2024-25 · 75+ Teams</span>
+    </div>
+    <div class="award-pill">
+      <div class="award-icon">⭐</div>
+      <p>Star Team</p>
+      <span>Q4 2024</span>
+    </div>
+    <div class="award-pill">
+      <div class="award-icon">🏅</div>
+      <p>Best Team</p>
+      <span>Q2 2020</span>
+    </div>
+    <div class="award-pill">
+      <div class="award-icon">⚡</div>
+      <p>On the Spot Award</p>
+      <span>Q2 2018 · Q4 2020 · Q1 2019</span>
+    </div>
+    <div class="award-pill">
+      <div class="award-icon">🌟</div>
+      <p>Employee of the Quarter</p>
+      <span>Q3 2014</span>
+    </div>
+  </div>
+</section>
+
+<!-- CONFERENCES -->
+<section id="conferences">
+  <div class="section-label">05 — Community & Conferences</div>
+  <h2 class="section-title">Thought Leadership</h2>
+  <p class="section-sub">Staying connected with the global cloud-native community.</p>
+  <div class="conf-cards reveal">
+    <div class="conf-card">
+      <div class="conf-badge">KubeCon India 2025</div>
+      <div class="conf-name">KubeCon + CloudNativeCon India</div>
+      <div class="conf-detail">📍 Hyderabad, India · Represented Hexagon, attending cloud-native innovation sessions and Kubernetes best practices.</div>
+    </div>
+    <div class="conf-card">
+      <div class="conf-badge">KubeCon 2024</div>
+      <div class="conf-name">KubeCon + CloudNativeCon Europe</div>
+      <div class="conf-detail">📍 Paris, France · Engaged with the global Kubernetes community, bringing learnings back to the engineering team.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PASSION -->
+<section id="passion">
+  <div class="section-label">06 — Passions & Interests</div>
+  <h2 class="section-title">Beyond The Code</h2>
+  <p class="section-sub">The things that drive me, inspire me, and keep me constantly learning.</p>
+  <div class="passion-grid">
+    <div class="passion-card reveal">
+      <div class="p-icon">☸️</div>
+      <h3>Cloud Native Ecosystem</h3>
+      <p>Kubernetes, service meshes, GitOps — I'm deeply invested in how modern infrastructure evolves. KubeCon is on my calendar every year.</p>
+    </div>
+    <div class="passion-card reveal">
+      <div class="p-icon">🏗️</div>
+      <h3>Systems Architecture</h3>
+      <p>I love the puzzle of distributed systems — designing for fault tolerance, eventual consistency, and sub-millisecond performance.</p>
+    </div>
+    <div class="passion-card reveal">
+      <div class="p-icon">🚀</div>
+      <h3>Hackathons & Innovation</h3>
+      <p>Competing in Hexagon's Hexathon against 75+ teams and winning — there's nothing like solving a novel problem under pressure.</p>
+    </div>
+    <div class="passion-card reveal">
+      <div class="p-icon">👨‍🏫</div>
+      <h3>Mentoring Engineers</h3>
+      <p>Helping junior engineers grow into confident, independent contributors is one of the most rewarding parts of my role.</p>
+    </div>
+    <div class="passion-card reveal">
+      <div class="p-icon">📖</div>
+      <h3>Continuous Learning</h3>
+      <p>Certifications, conference talks, open-source — I believe staying current is a professional responsibility in this field.</p>
+    </div>
+    <div class="passion-card reveal">
+      <div class="p-icon">⚡</div>
+      <h3>Performance Engineering</h3>
+      <p>Squeezing latency out of a system — whether it's a caching strategy or a Kafka partition scheme — genuinely excites me.</p>
+    </div>
+    <div class="passion-card reveal">
+      <div class="p-icon">✍️</div>
+      <h3>Fiction Writing</h3>
+      <p>I write stories that explore memory, identity, and the moments that define us. Author of <em>Flushbacks</em>, published on Inkitt.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WRITER -->
+<section id="writer">
+  <div class="section-label">07 — Author</div>
+  <h2 class="section-title">The Other Side<br />of My Mind</h2>
+  <div class="writer-layout">
+    <div class="writer-book-card reveal">
+      <div class="book-genre">Fiction · Drama</div>
+      <div class="book-title">Flush<span>backs</span></div>
+      <div class="book-author">by Vinod Chintapenta</div>
+      <p class="book-desc">
+        A story about the moments we can't let go of — and the ones that won't let go of us. <em>Flushbacks</em> explores memory, consequence, and the weight of the past through a narrative that moves between timelines, emotions, and the quiet devastation of choices made long ago.
+      </p>
+      <a href="https://www.inkitt.com/stories/1595498" target="_blank" rel="noopener noreferrer" class="book-cta">
+        📖 Read on Inkitt
+      </a>
+      <div class="inkitt-badge">
+        📚 Published on Inkitt · Free to read
+      </div>
+    </div>
+    <div class="writer-text reveal">
+      <p>
+        Engineering and writing aren't as different as people think. Both demand the ability to hold complexity in your head — to find the structure inside the chaos, and then shape it into something another person can follow.
+      </p>
+      <div class="writer-quote">
+        <p>"The discipline of storytelling and the craft of system design share the same core skill: shaping complexity into something coherent and meaningful."</p>
+        <cite>— Vinod Chintapenta</cite>
+      </div>
+      <p>
+        I write because it gives me a different kind of problem to solve — one where the constraints are human, emotional, and often unresolvable. After years of designing systems that must be deterministic and correct, fiction is where I let things be beautifully ambiguous.
+      </p>
+      <p>
+        <em>Flushbacks</em> is my first published work. More stories are in progress.
+      </p>
+      <a href="https://www.inkitt.com/stories/1595498" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="display:inline-block; margin-top: 0.5rem;">
+        Visit Inkitt Profile →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-box reveal">
+    <div class="section-label" style="justify-content: center">08 — Contact</div>
+    <h2 class="section-title">Let's Connect.</h2>
+    <p style="color:var(--muted); font-size: 1rem; margin-bottom: 1rem;">
+      This site is a living record of my professional journey — updated as I build, learn, and grow. If you're working on hard distributed systems problems, interested in cloud architecture discussions, or want to explore technical advisory or speaking — I'd love to hear from you.
+    </p>
+    <div class="contact-email">vinod.chintapenta@gmail.com</div>
+    <p style="color: var(--muted); font-size: 0.88rem;">📍 Hyderabad, India &nbsp;·&nbsp; +91-9700209075</p>
+    <div class="contact-links">
+      <a href="mailto:vinod.chintapenta@gmail.com" class="contact-link">
+        📧 Email Me
+      </a>
+      <a href="https://linkedin.com/in/vinod-chintapenta" target="_blank" class="contact-link">
+        💼 LinkedIn
+      </a>
+      <a href="#" class="contact-link">
+        📄 Download Resume
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>Vinod Chintapenta</span>
+  <span>Lead Cloud Architect · Author · Hyderabad, India · 13+ Years</span>
+  <span>© 2025</span>
+</footer>
+
+<!-- SCROLL REVEAL + TIMELINE ANIMATION -->
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal, .timeline-item').forEach(el => observer.observe(el));
+
+  // Stagger reveal cards
+  document.querySelectorAll('.skills-grid .skill-card, .passion-grid .passion-card').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.07}s`;
+    el.classList.add('reveal');
+    observer.observe(el);
+  });
+
+  // Nav scroll effect
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    nav.style.background = window.scrollY > 60
+      ? 'rgba(4,11,24,0.95)'
+      : 'rgba(4,11,24,0.75)';
+  });
+</script>
+</body>
+</html>
